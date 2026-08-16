@@ -148,56 +148,139 @@ function closeSidebar() { $("#sidebar").classList.remove("open"); $("#sidebarOve
    (Halaman "pageLinkTelegram" dipakai ulang sbg form masukkan kode,
    bukan menampilkan kode - karena kode DIBUAT oleh bot, bukan web)
 --------------------------------------------------------------- */
+/* ---------------------------------------------------------------
+   TAB ID: dipakai supaya server tahu 1 percobaan OTP datang dari
+   tab browser yang mana (sessionStorage = per-tab, bukan per-browser
+   seperti localStorage). Dipakai untuk mencegah "bolak-balik OTP":
+   begitu 1 tab sudah mulai/menyelesaikan satu proses verifikasi,
+   tab itu dikunci dan harus minta kode baru dari bot kalau mau coba lagi.
+--------------------------------------------------------------- */
+function getTabId() {
+  let id = sessionStorage.getItem("kb_tab_id");
+  if (!id) {
+    id = (crypto.randomUUID ? crypto.randomUUID() : ("tab_" + Date.now() + "_" + Math.random().toString(36).slice(2)));
+    sessionStorage.setItem("kb_tab_id", id);
+  }
+  return id;
+}
+
+let otpPollTimer = null;
+let otpPollDeadline = 0;
+
 function setupLoginPage() {
   $("#btnLoginTelegram").addEventListener("click", () => goToLinkTelegramForm());
-  $("#btnLoginEmail").addEventListener("click", notAvailable);
   $("#showLinkTelegram").addEventListener("click", () => goToLinkTelegramForm());
-  $("#backToLogin").addEventListener("click", () => goToPage("login"));
+  $("#backToLogin").addEventListener("click", () => { stopOtpPolling(); goToPage("login"); });
+
+  $("#btnVerifyOtp").addEventListener("click", doVerifyCode);
+  $("#otpCode").addEventListener("keydown", (e) => { if (e.key === "Enter") doVerifyCode(); });
+  $("#btnOpenTelegram").addEventListener("click", () => window.open("https://t.me/", "_blank"));
+  $("#btnOpenTelegram2").addEventListener("click", () => window.open("https://t.me/", "_blank"));
+  $("#btnCancelWaiting").addEventListener("click", () => { stopOtpPolling(); showOtpStep("input"); });
+  $("#btnRetryOtp").addEventListener("click", () => {
+    sessionStorage.removeItem("kb_otp_locked");
+    $("#otpCode").value = "";
+    showOtpStep("input");
+  });
+}
+
+function showOtpStep(step) {
+  $("#otpStepInput").classList.toggle("hidden", step !== "input");
+  $("#otpStepWaiting").classList.toggle("hidden", step !== "waiting");
+  $("#otpStepFailed").classList.toggle("hidden", step !== "failed");
 }
 
 function goToLinkTelegramForm() {
-  // Ubah tampilan halaman OTP: dari "menampilkan kode" -> "input kode"
-  const otpBox = $("#otpCode");
-  if (otpBox && otpBox.tagName !== "INPUT") {
-    const input = document.createElement("input");
-    input.id = "otpCode";
-    input.maxLength = 6;
-    input.placeholder = "KODE6";
-    input.autocomplete = "off";
-    input.className = "w-full bg-transparent text-center font-currency-display text-currency-display text-ink-black tracking-widest uppercase outline-none";
-    otpBox.replaceWith(input);
+  // Satu tab yang sudah pernah menuntaskan 1 percobaan OTP (berhasil,
+  // ditolak, atau kadaluarsa) tidak otomatis dibuka lagi ke form input -
+  // cegah user bolak-balik coba kode yang sama di tab yang sama.
+  if (sessionStorage.getItem("kb_otp_locked") === "1") {
+    goToPage("linkTelegram");
+    showOtpStep("failed");
+    $("#otpFailedTitle").textContent = "Sesi OTP Tab Ini Sudah Dipakai";
+    $("#otpFailedText").textContent = "Untuk keamanan, satu tab browser hanya bisa mencoba 1 sesi verifikasi. Buka tab baru, atau tekan tombol di bawah untuk mencoba lagi di tab ini dengan kode baru dari bot.";
+    return;
   }
-  $("#pageLinkTelegram .mb-6 + p, #pageLinkTelegram p").forEach && null;
-  const descEl = document.querySelector("#pageLinkTelegram p.text-on-surface-variant");
-  if (descEl) descEl.innerHTML = 'Buka bot Telegram, ketik <b>web</b>, lalu masukkan 6 karakter kode yang dikirim bot di kolom bawah.';
-  $("#btnRefreshOtp").textContent = "";
-  $("#btnRefreshOtp").innerHTML = '<span class="material-symbols-outlined" data-icon="refresh">refresh</span><span>Verifikasi Kode</span>';
-  $("#btnRefreshOtp").onclick = doVerifyCode;
-  $("#btnOpenTelegram").onclick = () => window.open("https://t.me/", "_blank");
+  showOtpStep("input");
+  goToPage("linkTelegram");
 
   const urlCode = new URLSearchParams(location.search).get("code");
-  goToPage("linkTelegram");
   if (urlCode) $("#otpCode").value = urlCode.toUpperCase();
 }
 
 function doVerifyCode() {
   const codeEl = $("#otpCode");
-  const code = (codeEl.value || "").trim();
+  const code = (codeEl.value || "").trim().toUpperCase();
   if (code.length !== 6) { toast("Kode harus 6 karakter.", "error"); return; }
-  showLoading("Memverifikasi...");
-  api("webVerifikasi_", [code]).then(res => {
+
+  $("#btnVerifyOtp").setAttribute("disabled", "true");
+  showLoading("Memverifikasi kode...");
+  api("webVerifikasi_", [code, getTabId()]).then(res => {
     hideLoading();
+    $("#btnVerifyOtp").removeAttribute("disabled");
+
     if (!res.ok) { toast(res.message || "Kode salah.", "error"); return; }
-    S.token = res.token;
-    S.username = res.username || "";
-    S.chatId = res.chatId || "";
-    localStorage.setItem("kb_token", S.token);
-    history.replaceState(null, "", location.pathname);
-    afterLogin();
+
+    // Kode benar -> BUKAN langsung login. Tunggu user menekan Izinkan/Tolak
+    // di Telegram dulu (cegah penyalahgunaan kalau kode ketebak/bocor).
+    if (res.pending) {
+      history.replaceState(null, "", location.pathname);
+      sessionStorage.setItem("kb_otp_locked", "1"); // tab ini sudah "dipakai" utk 1 percobaan
+      showOtpStep("waiting");
+      startOtpPolling(res.pendingId);
+    }
   });
 }
 
+function startOtpPolling(pendingId) {
+  stopOtpPolling();
+  otpPollDeadline = Date.now() + 3 * 60 * 1000; // sinkron dgn WEB_PENDING_MENIT di backend
+  otpPollTimer = setInterval(() => pollOtpStatus(pendingId), 2000);
+  pollOtpStatus(pendingId);
+}
+
+function stopOtpPolling() {
+  if (otpPollTimer) { clearInterval(otpPollTimer); otpPollTimer = null; }
+}
+
+function pollOtpStatus(pendingId) {
+  if (Date.now() > otpPollDeadline) {
+    stopOtpPolling();
+    showOtpFailed("Waktu Konfirmasi Habis", "Kamu tidak menekan Izinkan dalam 3 menit. Ketik `web` lagi di bot untuk kode baru.");
+    return;
+  }
+  api("webCekKonfirmasi_", [pendingId]).then(res => {
+    if (!res.ok) {
+      stopOtpPolling();
+      showOtpFailed("Sesi Verifikasi Bermasalah", res.message || "Sesi verifikasi tidak valid lagi. Minta kode baru dari bot.");
+      return;
+    }
+    if (res.status === "pending") return; // masih menunggu, terus polling
+
+    stopOtpPolling();
+    if (res.status === "approved") {
+      S.token = res.token;
+      S.username = res.username || "";
+      S.chatId = res.chatId || "";
+      S.isAdmin = !!res.isAdmin;
+      localStorage.setItem("kb_token", S.token);
+      afterLogin();
+    } else if (res.status === "rejected") {
+      showOtpFailed("Login Ditolak", "Permintaan login ini ditolak lewat Telegram. Kalau ini kamu, ulangi dari bot dan pastikan menekan Izinkan.");
+    } else if (res.status === "expired") {
+      showOtpFailed("Waktu Konfirmasi Habis", res.message || "Ketik `web` lagi di bot untuk kode baru.");
+    }
+  });
+}
+
+function showOtpFailed(title, text) {
+  showOtpStep("failed");
+  $("#otpFailedTitle").textContent = title;
+  $("#otpFailedText").textContent = text;
+}
+
 function afterLogin() {
+  sessionStorage.removeItem("kb_otp_locked"); // sudah login, kunci tab tidak relevan lagi
   renderNavMenu();
   $("#userPlan").textContent = S.username ? ("Halo, " + S.username) : "Free User";
   goToPage("dashboard");
@@ -206,7 +289,10 @@ function afterLogin() {
 function doLogout(silent) {
   if (S.token) api("webLogout_", [S.token]);
   S.token = "";
+  S.isAdmin = false;
   localStorage.removeItem("kb_token");
+  localStorage.removeItem("kb_admin_token");
+  sessionStorage.removeItem("kb_otp_locked");
   if (!silent) toast("Berhasil keluar.", "success");
   goToPage("login");
 }
@@ -696,21 +782,9 @@ function renderSettingsPage() {
     $("#settingsEmail").textContent = S.email || "Belum ada email terhubung";
   });
 
-  // Fitur yang backend-nya belum ada -> dinonaktifkan dgn jujur
-  ["btnChangePassword", "btnManageSessions", "btnUnlinkTelegram", "btnDeleteAccount",
-   "btnExportData", "btnImportData", "btnRequestDelete", "btnViewAuditLog"].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.onclick = notAvailable;
-  });
-  ["notifDaily", "notifBudget"].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.onchange = notAvailable;
-  });
-
   const dm = $("#darkModeToggle");
   dm.checked = document.documentElement.classList.contains("dark");
   dm.onchange = () => toggleDarkMode(dm.checked);
-  $("#compactModeToggle").onchange = notAvailable;
 
   $("#logoutBtn").onclick = () => doLogout(false);
 }
@@ -722,13 +796,24 @@ function toggleDarkMode(on) {
 }
 
 /* ---------------------------------------------------------------
-   ADMIN (token developer terpisah, biasanya dibuka dari link
-   "dev dashboard" di bot -> ?page=admin&token=adm_xxx)
+   ADMIN
+   Sekarang akses admin CUKUP lewat login web normal (OTP + konfirmasi
+   Telegram) ASALKAN chatId-nya terdaftar sebagai developer di backend
+   (DEVELOPER_CHAT_IDS). Link lama "?page=admin&token=adm_xxx" dari
+   command "dev dashboard" di bot tetap didukung sbg fallback.
 --------------------------------------------------------------- */
+function adminTok() {
+  return S.adminToken || S.token;
+}
+
 function renderAdminPage() {
-  if (!S.adminToken) { toast("Buka dashboard admin lewat link dari bot (ketik 'dev dashboard').", "error"); goToPage("dashboard"); return; }
+  if (!S.isAdmin && !S.adminToken) {
+    toast("Akses admin khusus developer. Login dulu lewat Telegram (chatId kamu harus terdaftar sbg developer).", "error");
+    goToPage("dashboard");
+    return;
+  }
   showLoading("Memuat data admin...");
-  api("webAdminGetData_", [S.adminToken]).then(res => {
+  api("webAdminGetData_", [adminTok()]).then(res => {
     hideLoading();
     if (!res.ok) { toast(res.message || "Akses admin ditolak.", "error"); S.isAdmin = false; S.adminToken = ""; localStorage.removeItem("kb_admin_token"); renderNavMenu(); goToPage("dashboard"); return; }
 
@@ -739,6 +824,7 @@ function renderAdminPage() {
 
     $("#adminUsersTableBody").innerHTML = res.users.map(u => `
       <tr class="border-b-2 border-ink-black">
+
         <td class="p-3">${escapeHtml(u.username)}</td>
         <td class="p-3">${escapeHtml(u.chatId)}</td>
         <td class="p-3">${u.email ? "📧" : "-"}</td>
@@ -766,7 +852,7 @@ function renderAdminPage() {
     $("#btnToggleMaintenance").textContent = res.stats.maintenance ? "Nonaktifkan" : "Aktifkan";
     $("#btnToggleMaintenance").onclick = () => {
       showLoading("Mengubah status...");
-      api("adminSetMaintenance_", [S.adminToken, !res.stats.maintenance]).then(r => {
+      api("adminSetMaintenance_", [adminTok(), !res.stats.maintenance]).then(r => {
         hideLoading();
         toast(r.message || "", r.ok ? "success" : "error");
         if (r.ok) renderAdminPage();
@@ -776,7 +862,7 @@ function renderAdminPage() {
     $("#strukMaxInput").value = res.stats.batasStruk || "";
     $("#btnSaveStrukMax").onclick = () => {
       const n = $("#strukMaxInput").value;
-      api("adminSetStrukMax_", [S.adminToken, n]).then(r => {
+      api("adminSetStrukMax_", [adminTok(), n]).then(r => {
         $("#strukMaxStatus").textContent = r.message || "";
       });
     };
@@ -792,12 +878,12 @@ function renderAdminPage() {
       btn.addEventListener("click", () => {
         const jenis = btn.getAttribute("data-save");
         const val = document.querySelector(`[data-jenis="${jenis}"]`).value;
-        api("adminSetDonasi_", [S.adminToken, jenis, val]).then(r => toast(r.message || "", r.ok ? "success" : "error"));
+        api("adminSetDonasi_", [adminTok(), jenis, val]).then(r => toast(r.message || "", r.ok ? "success" : "error"));
       });
     });
     $("#donasiSettings").querySelectorAll("[data-hapus]").forEach(btn => {
       btn.addEventListener("click", () => {
-        api("adminHapusDonasi_", [S.adminToken, btn.getAttribute("data-hapus")]).then(r => { toast(r.message || "", r.ok ? "success" : "error"); renderAdminPage(); });
+        api("adminHapusDonasi_", [adminTok(), btn.getAttribute("data-hapus")]).then(r => { toast(r.message || "", r.ok ? "success" : "error"); renderAdminPage(); });
       });
     });
   });
@@ -808,7 +894,7 @@ function renderAdminPage() {
     if (!msg) { toast("Isi pesan broadcast dulu.", "error"); return; }
     if (!confirm("Kirim pengumuman ini ke SEMUA user?")) return;
     showLoading("Mengirim broadcast...");
-    api("adminBroadcast_", [S.adminToken, msg]).then(r => {
+    api("adminBroadcast_", [adminTok(), msg]).then(r => {
       hideLoading();
       $("#broadcastStatus").textContent = r.message || "";
       toast(r.message || "", r.ok ? "success" : "error");
@@ -866,13 +952,26 @@ function boot() {
         S.username = res.username;
         S.chatId = res.chatId;
         S.email = res.email;
+        S.isAdmin = S.isAdmin || !!res.isAdmin;
         afterLogin();
       } else {
         localStorage.removeItem("kb_token");
-        goToPage("login");
+        routeFreshVisit();
       }
     });
   } else if (!adminTokenFromUrl) {
+    routeFreshVisit();
+  }
+}
+
+// Kalau link dibuka langsung dari bot (mengandung ?code=...), langsung
+// arahkan ke form verifikasi OTP dgn kode terisi, bukan ke halaman login
+// biasa - biar user tidak perlu klik "Hubungkan Telegram ID" dulu.
+function routeFreshVisit() {
+  const hasCode = new URLSearchParams(location.search).get("code");
+  if (hasCode) {
+    goToLinkTelegramForm();
+  } else {
     goToPage("login");
   }
 }
