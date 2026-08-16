@@ -438,6 +438,10 @@ Manual
 <span class="material-symbols-outlined mr-1" data-icon="psychology">psychology</span>
 AI Asisten
 </button>
+<button class="flex-1 tab-btn bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-lg py-3 font-label-md text-label-md uppercase" role="tab" aria-selected="false" data-mode="struk" id="tabStruk">
+<span class="material-symbols-outlined mr-1" data-icon="receipt_long">receipt_long</span>
+Foto Struk
+</button>
 </div>
 </div>
 
@@ -524,6 +528,37 @@ Proses dengan AI
 </div>
 <div class="hidden bg-error-container border-2 border-ink-black rounded-xl p-4" id="aiError">
 <p class="font-body-md text-body-md" id="aiErrorText"></p>
+</div>
+</div>
+</div>
+
+<!-- Foto Struk Form -->
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6 hidden" id="formStruk" role="tabpanel" aria-labelledby="tabStruk">
+<div class="space-y-4">
+<div>
+<label class="font-label-md text-label-md block mb-1">Foto struk/nota belanja</label>
+<input type="file" accept="image/*" capture="environment" class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" id="strukFileInput">
+<p class="text-sm text-on-surface-variant mt-1">Dibaca otomatis pakai AI Vision (HCNSec), sama seperti kirim foto ke bot Telegram.</p>
+</div>
+<div class="hidden" id="strukPreviewWrap">
+<img class="w-full max-h-72 object-contain border-2 border-ink-black rounded-xl bg-surface-variant" id="strukPreviewImg" alt="Pratinjau foto struk">
+</div>
+<div>
+<label class="font-label-md text-label-md block mb-1">Catatan (opsional)</label>
+<input type="text" class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" id="strukCaptionInput" placeholder="mis. bayar pakai QRIS BCA">
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-primary text-on-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 font-label-md text-label-md uppercase" id="btnProcessStruk" disabled>
+<span class="material-symbols-outlined mr-1" data-icon="auto_awesome">auto_awesome</span>
+Baca &amp; Simpan Struk
+</button>
+<button class="flex-1 bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl py-3 font-label-md text-label-md uppercase" id="btnClearStruk">Bersihkan</button>
+</div>
+<div class="hidden bg-secondary-container border-2 border-ink-black rounded-xl p-4" id="strukResult">
+<p class="font-body-md text-body-md whitespace-pre-line" id="strukResultText"></p>
+</div>
+<div class="hidden bg-error-container border-2 border-ink-black rounded-xl p-4" id="strukError">
+<p class="font-body-md text-body-md" id="strukErrorText"></p>
 </div>
 </div>
 </div>
