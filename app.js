@@ -77,6 +77,35 @@ function api(fn, args) {
     });
 }
 
+// Sama seperti api(), tapi lewat POST dgn Content-Type: text/plain
+// (bukan application/json) supaya tetap "simple request" & tidak kena
+// preflight OPTIONS (Apps Script tidak mendukungnya). Dipakai KHUSUS
+// untuk payload besar yang tidak muat di query string GET, misalnya
+// upload foto struk base64 (bisa ratusan KB - beberapa MB).
+function apiUpload(fn, args) {
+  if (!BACKEND_URL || BACKEND_URL.indexOf("PASTE_URL") === 0) {
+    toast("BACKEND_URL belum diisi di app.js.", "error");
+    return Promise.resolve({ ok: false, message: "BACKEND_URL belum dikonfigurasi." });
+  }
+  const body = JSON.stringify({ api: "1", fn: fn, a: JSON.stringify(args || []) });
+  return fetch(BACKEND_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: body,
+  })
+    .then(r => r.json())
+    .then(res => {
+      if (res && res.ok === false && res.message && res.message.indexOf("Sesi berakhir") !== -1) {
+        doLogout(true);
+      }
+      return res;
+    })
+    .catch(err => {
+      toast("Gagal menghubungi server: " + err.message, "error");
+      return { ok: false, message: err.message };
+    });
+}
+
 /* ---------------------------------------------------------------
    NAVIGASI / ROUTER
 --------------------------------------------------------------- */
@@ -495,6 +524,7 @@ function renderAddTransactionPage() {
 
   $("#tabManual").onclick = () => switchAddMode("manual");
   $("#tabAI").onclick = () => switchAddMode("ai");
+  $("#tabStruk").onclick = () => switchAddMode("struk");
   $("#btnBackFromAdd").onclick = () => goToPage("dashboard");
   $("#btnCancelTransaction").onclick = () => goToPage("dashboard");
   $("#btnTypeExpense").onclick = () => setTxType("Keluar");
@@ -519,17 +549,94 @@ function renderAddTransactionPage() {
     submitTransaction(text);
   };
   $("#btnClearAI").onclick = () => { $("#aiInput").value = ""; $("#aiPreview").classList.add("hidden"); };
+
+  setupStrukTab();
 }
 
 function switchAddMode(mode) {
-  $("#tabManual").classList.toggle("active", mode === "manual");
-  $("#tabManual").classList.toggle("bg-primary", mode === "manual");
-  $("#tabManual").classList.toggle("text-on-primary", mode === "manual");
-  $("#tabAI").classList.toggle("active", mode === "ai");
-  $("#tabAI").classList.toggle("bg-primary", mode === "ai");
-  $("#tabAI").classList.toggle("text-on-primary", mode === "ai");
+  [["#tabManual", "manual"], ["#tabAI", "ai"], ["#tabStruk", "struk"]].forEach(([sel, m]) => {
+    $(sel).classList.toggle("active", mode === m);
+    $(sel).classList.toggle("bg-primary", mode === m);
+    $(sel).classList.toggle("text-on-primary", mode === m);
+  });
   $("#formManual").classList.toggle("hidden", mode !== "manual");
   $("#formAI").classList.toggle("hidden", mode !== "ai");
+  $("#formStruk").classList.toggle("hidden", mode !== "struk");
+}
+
+/* ---------------------------------------------------------------
+   FOTO STRUK (upload + baca via AI Vision HCNSec, langsung tersimpan
+   jadi transaksi - mirip fitur kirim foto ke bot Telegram)
+--------------------------------------------------------------- */
+let strukBase64 = "";   // tanpa prefix "data:...;base64,"
+let strukMime = "";
+
+function setupStrukTab() {
+  const fileInput = $("#strukFileInput");
+  if (!fileInput) return;
+
+  fileInput.value = "";
+  strukBase64 = ""; strukMime = "";
+  $("#strukPreviewWrap").classList.add("hidden");
+  $("#strukResult").classList.add("hidden");
+  $("#strukError").classList.add("hidden");
+  $("#btnProcessStruk").disabled = true;
+
+  fileInput.onchange = () => {
+    const file = fileInput.files && fileInput.files[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { toast("File harus berupa gambar.", "error"); return; }
+    if (file.size > 8 * 1024 * 1024) { toast("Ukuran foto maksimal 8MB.", "error"); return; }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result; // "data:image/png;base64,AAAA..."
+      const comma = dataUrl.indexOf(",");
+      strukBase64 = dataUrl.slice(comma + 1);
+      strukMime = file.type || "image/jpeg";
+      $("#strukPreviewImg").src = dataUrl;
+      $("#strukPreviewWrap").classList.remove("hidden");
+      $("#btnProcessStruk").disabled = false;
+      $("#strukResult").classList.add("hidden");
+      $("#strukError").classList.add("hidden");
+    };
+    reader.onerror = () => toast("Gagal membaca file gambar.", "error");
+    reader.readAsDataURL(file);
+  };
+
+  $("#btnProcessStruk").onclick = () => {
+    if (!strukBase64) { toast("Pilih foto struk dulu.", "error"); return; }
+    const caption = $("#strukCaptionInput").value.trim();
+    const btn = $("#btnProcessStruk");
+    btn.disabled = true;
+    showLoading("Membaca struk dengan AI Vision...");
+    apiUpload("webUploadStruk_", [S.token, strukBase64, strukMime, caption]).then(res => {
+      hideLoading();
+      btn.disabled = false;
+      if (!res.ok) {
+        $("#strukError").classList.remove("hidden");
+        $("#strukErrorText").textContent = res.message || "Gagal membaca foto struk.";
+        $("#strukResult").classList.add("hidden");
+        toast(res.message || "Gagal membaca foto struk.", "error");
+        return;
+      }
+      $("#strukError").classList.add("hidden");
+      $("#strukResult").classList.remove("hidden");
+      $("#strukResultText").textContent = res.message || "Struk tersimpan.";
+      toast("Struk tersimpan sebagai transaksi.", "success");
+      if (res.data) { S.categories.add(res.data.kategori); S.accounts.add(res.data.rekening); }
+    });
+  };
+
+  $("#btnClearStruk").onclick = () => {
+    fileInput.value = "";
+    strukBase64 = ""; strukMime = "";
+    $("#strukCaptionInput").value = "";
+    $("#strukPreviewWrap").classList.add("hidden");
+    $("#strukResult").classList.add("hidden");
+    $("#strukError").classList.add("hidden");
+    $("#btnProcessStruk").disabled = true;
+  };
 }
 
 function setTxType(type) {
