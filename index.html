@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KeuanganBot - Dashboard Keuangan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Archivo+Narrow:wght@400;500&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "secondary-fixed-dim": "#4ae176",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "primary": "#004ac6",
+                        "outline": "#737686",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-secondary-container": "#007432",
+                        "tertiary-container": "#cf2c30",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "tertiary-fixed": "#ffdad7",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#0053db",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "surface-variant": "#e0e3e5",
+                        "background": "#f7f9fb",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-tertiary-fixed-variant": "#930013",
+                        "on-surface": "#191c1e",
+                        "surface-container-highest": "#e0e3e5",
+                        "inverse-primary": "#b4c5ff",
+                        "ink-black": "#0F172A",
+                        "on-secondary-fixed-variant": "#005321",
+                        "tertiary": "#ab0b1c",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary-container": "#ffecea",
+                        "outline-variant": "#c3c6d7",
+                        "surface": "#f7f9fb",
+                        "on-primary-fixed": "#00174b",
+                        "secondary": "#006e2f",
+                        "surface-container": "#eceef0",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "paper-white": "#FFFFFF",
+                        "primary-container": "#2563eb",
+                        "secondary-container": "#6bff8f",
+                        "canary-yellow": "#FDE047",
+                        "on-primary-container": "#eeefff",
+                        "on-background": "#191c1e",
+                        "on-tertiary-fixed": "#410004",
+                        "secondary-fixed": "#6bff8f",
+                        "on-surface-variant": "#434655",
+                        "primary-fixed": "#dbe1ff",
+                        "on-secondary-fixed": "#002109",
+                        "inverse-surface": "#2d3133",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "stack-xl": "40px",
+                        "stack-sm": "8px",
+                        "stack-lg": "24px",
+                        "gutter": "16px",
+                        "stack-xs": "4px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Montserrat"],
+                        "body-md": ["Archivo Narrow"],
+                        "body-lg": ["Archivo Narrow"],
+                        "label-md": ["JetBrains Mono"],
+                        "currency-display": ["Montserrat"],
+                        "display-lg": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "headline-md": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.5", "fontWeight": "500" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "currency-display": ["28px", { "lineHeight": "1.1", "fontWeight": "900" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "900" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .neo-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(15,23,42,1);
+        }
+        .neo-shadow-sm {
+            box-shadow: 2px 2px 0px 0px rgba(15,23,42,1);
+        }
+        .neo-shadow-hover:hover {
+            box-shadow: 2px 2px 0px 0px rgba(15,23,42,1);
+            transform: translate(2px, 2px);
+        }
+        .neo-border {
+            border: 2px solid #0F172A;
+        }
+        .brutal-input:focus {
+            border-color: #004ac6;
+            box-shadow: 4px 4px 0px 0px rgba(15,23,42,1);
+        }
+        .brutal-active:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px rgba(15,23,42,1);
+        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #e0e3e5; }
+        ::-webkit-scrollbar-thumb { background: #0F172A; border: 2px solid #e0e3e5; }
+        ::-webkit-scrollbar-thumb:hover { background: #191c1e; }
+        
+        .page { display: none; }
+        .page.active { display: block; }
+        
+        .tab-btn { transition: all 0.15s ease; }
+        .tab-btn.active { background: #004ac6; color: white; }
+        
+        .transaction-row { transition: background 0.1s; }
+        .transaction-row:hover { background: #f2f4f6; }
+        
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 50; }
+        .modal-overlay.active { display: flex; align-items: center; justify-content: center; padding: 16px; }
+        
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 39; }
+            .sidebar-overlay.open { display: block; }
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface">
+<!-- Telegram Web App Script -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<!-- Top App Bar (Mobile) -->
+<header class="bg-paper-white dark:bg-ink-black fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 h-16 border-b-2 border-ink-black shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] md:hidden" id="topAppBar">
+<div class="flex items-center gap-3">
+<button class="p-2 border-2 border-transparent hover:border-ink-black rounded-lg active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all" id="menuBtn" aria-label="Open Menu">
+<span class="material-symbols-outlined text-ink-black">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-black text-ink-black uppercase tracking-tighter">KEUANGANBOT</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 border-2 border-transparent hover:border-ink-black rounded-lg active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all" id="themeToggle" aria-label="Toggle Theme">
+<span class="material-symbols-outlined text-ink-black" id="themeIcon">dark_mode</span>
+</button>
+<div class="w-8 h-8 bg-surface-variant border-2 border-ink-black rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-ink-black text-lg" id="userAvatar">person</span>
+</div>
+</div>
+</header>
+
+<!-- Sidebar Overlay (Mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+<!-- Navigation Drawer (Desktop) / Sidebar (Mobile) -->
+<nav class="hidden md:flex flex-col fixed left-0 top-0 h-full w-64 border-r-2 border-ink-black shadow-[4px_0px_0px_0px_rgba(15,23,42,1)] bg-paper-white dark:bg-ink-black pt-24 z-40 sidebar" id="sidebar" role="navigation" aria-label="Main Navigation">
+<div class="p-6">
+<h2 class="font-headline-md text-headline-md font-black text-ink-black mb-2">Financial Hub</h2>
+<p class="font-label-md text-label-md text-outline" id="userPlan">Free User</p>
+</div>
+<ul class="flex flex-col gap-2 px-4" id="navMenu">
+<!-- Navigation items will be rendered by JS -->
+</ul>
+<div class="mt-auto p-4 border-t-2 border-ink-black">
+<button class="w-full bg-tertiary-container text-on-tertiary-container border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl p-3 flex items-center justify-center gap-2 transition-all cursor-pointer font-label-md text-label-md uppercase" id="logoutBtn">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Keluar</span>
+</button>
+</div>
+</nav>
+
+<!-- Main Content -->
+<main class="pt-16 md:pt-24 md:pl-72 md:pr-8 px-4 max-w-[1200px] mx-auto min-h-screen pb-24" id="mainContent" role="main">
+<!-- Page: Login / Link Telegram -->
+<div class="page active" id="pageLogin" role="region" aria-label="Login">
+<div class="max-w-md mx-auto mt-20">
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-8 text-center">
+<div class="w-20 h-20 mx-auto mb-6 bg-primary-container border-2 border-ink-black neo-shadow rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-4xl">account_balance_wallet</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg font-black text-ink-black mb-2">KeuanganBot</h1>
+<p class="text-on-surface-variant mb-8">Kelola keuanganmu dengan mudah lewat Telegram & Web</p>
+<div class="space-y-4">
+<button class="w-full bg-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-4 flex items-center justify-center gap-3 transition-all cursor-pointer font-label-md text-label-md uppercase text-on-primary" id="btnLoginTelegram">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.11.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+<span>Masuk dengan Telegram</span>
+</button>
+<button class="w-full bg-canary-yellow border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-4 flex items-center justify-center gap-3 transition-all cursor-pointer font-label-md text-label-md uppercase" id="btnLoginEmail">
+<span class="material-symbols-outlined" data-icon="email">email</span>
+<span>Lanjutkan dengan Email</span>
+</button>
+</div>
+<p class="mt-6 text-sm text-on-surface-variant">Dengan masuk, Anda menyetujui <a href="#" class="underline hover:text-primary">Syarat & Ketentuan</a> dan <a href="#" class="underline hover:text-primary">Kebijakan Privasi</a></p>
+</div>
+<div class="mt-6 text-center text-sm text-on-surface-variant">
+<p>Sudah punya akun? <button class="text-primary underline hover:text-primary-fixed" id="showLinkTelegram">Hubungkan Telegram ID</button></p>
+</div>
+</div>
+</div>
+
+<!-- Page: Link Telegram ID (OTP) -->
+<div class="page" id="pageLinkTelegram" role="region" aria-label="Link Telegram">
+<div class="max-w-md mx-auto mt-20">
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-8">
+<button class="absolute top-4 right-4 p-2 border-2 border-transparent hover:border-ink-black rounded-lg active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all" id="backToLogin">
+<span class="material-symbols-outlined text-ink-black">arrow_back</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg font-black text-ink-black mb-2 text-center">Hubungkan Telegram</h1>
+<p class="text-on-surface-variant mb-6 text-center">Kirimkan kode di bawah ke bot <b>@KeuanganBot</b> untuk menghubungkan akun</p>
+<div class="bg-surface-variant border-2 border-ink-black rounded-xl p-6 text-center mb-6">
+<div class="font-label-md text-label-md text-on-surface-variant mb-2">KODE OTP</div>
+<div class="font-currency-display text-currency-display text-ink-black tracking-widest letter-spacing-[0.5em]" id="otpCode">------</div>
+</div>
+<div class="space-y-3">
+<button class="w-full bg-secondary-container border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 flex items-center justify-center gap-2 transition-all cursor-pointer font-label-md text-label-md" id="btnRefreshOtp">
+<span class="material-symbols-outlined" data-icon="refresh">refresh</span>
+<span>Buat Kode Baru</span>
+</button>
+<button class="w-full bg-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 flex items-center justify-center gap-2 transition-all cursor-pointer font-label-md text-label-md uppercase text-on-primary" id="btnOpenTelegram">
+<span class="material-symbols-outlined" data-icon="telegram">telegram</span>
+<span>Buka Telegram</span>
+</button>
+</div>
+<p class="mt-4 text-sm text-center text-on-surface-variant">Kode berlaku 10 menit. Jangan bagikan ke siapapun.</p>
+</div>
+</div>
+</div>
+
+<!-- Page: Dashboard -->
+<div class="page" id="pageDashboard" role="region" aria-label="Dashboard">
+<!-- Summary Cards -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" aria-label="Ringkasan Keuangan">
+<div class="bg-primary-fixed border-2 border-ink-black neo-shadow rounded-xl p-6 flex flex-col justify-between h-32" id="cardTotalSaldo">
+<h3 class="font-label-md text-label-md text-on-surface uppercase mt-0">Total Saldo</h3>
+<p class="font-currency-display text-currency-display text-ink-black mt-auto" id="totalSaldo">Rp 0</p>
+</div>
+<div class="bg-secondary-container border-2 border-ink-black neo-shadow rounded-xl p-6 flex flex-col justify-between h-32" id="cardPemasukan">
+<h3 class="font-label-md text-label-md text-on-surface uppercase mt-0">Pemasukan</h3>
+<p class="font-currency-display text-currency-display text-ink-black mt-auto" id="totalPemasukan">+ Rp 0</p>
+</div>
+<div class="bg-tertiary-fixed border-2 border-ink-black neo-shadow rounded-xl p-6 flex flex-col justify-between h-32" id="cardPengeluaran">
+<h3 class="font-label-md text-label-md text-on-surface uppercase mt-0">Pengeluaran</h3>
+<p class="font-currency-display text-currency-display text-ink-black mt-auto" id="totalPengeluaran">- Rp 0</p>
+</div>
+</section>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+<!-- Main Chart Area -->
+<section class="lg:col-span-2 bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6" id="chartSection">
+<h3 class="font-headline-md text-headline-md font-bold mb-4 mt-0">Pengeluaran per Kategori</h3>
+<div class="aspect-video w-full border-2 border-ink-black bg-surface-variant flex items-center justify-center rounded-lg relative overflow-hidden" id="chartContainer">
+<canvas id="expenseChart"></canvas>
+<div class="absolute inset-0 flex items-center justify-center" id="chartEmpty">
+<p class="text-on-surface-variant text-center px-4">Belum ada data pengeluaran</p>
+</div>
+</div>
+</section>
+
+<!-- Quick Shortcuts & Mini Stats -->
+<section class="flex flex-col gap-4">
+<button class="w-full bg-canary-yellow border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl p-6 flex items-center justify-center gap-3 transition-all cursor-pointer h-20" id="btnAddTransaction">
+<span class="material-symbols-outlined text-ink-black text-3xl" data-icon="add_circle">add_circle</span>
+<span class="font-label-md text-label-md uppercase">Tambah Transaksi</span>
+</button>
+<button class="w-full bg-inverse-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl p-6 flex items-center justify-center gap-3 transition-all cursor-pointer h-20" id="btnUploadReceipt">
+<span class="material-symbols-outlined text-ink-black text-3xl" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-md text-label-md uppercase">Upload Struk</span>
+</button>
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6 flex-1" id="budgetCard">
+<h4 class="font-label-md text-label-md mb-3">Budget Tersisa</h4>
+<div class="w-full bg-surface-variant h-6 border-2 border-ink-black rounded-full overflow-hidden">
+<div class="bg-secondary h-full border-r-2 border-ink-black" id="budgetProgress" style="width: 0%"></div>
+</div>
+<p class="font-body-md text-body-md text-right mt-2" id="budgetText">0% - Belum ada budget</p>
+</div>
+</section>
+</div>
+
+<!-- Recent Transactions -->
+<section class="mt-6 bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6" id="transactionsSection">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline-md text-headline-md font-bold mt-0">Transaksi Terakhir</h3>
+<button class="font-label-md text-label-md text-primary hover:underline bg-transparent border-none p-0 cursor-pointer" id="btnViewAllTransactions">Lihat Semua</button>
+</div>
+<div class="flex flex-col" id="transactionsList">
+<div class="flex items-center justify-center py-12 text-on-surface-variant" id="transactionsEmpty">
+<p>Belum ada transaksi. Tambahkan transaksi pertama Anda!</p>
+</div>
+</div>
+</section>
+</div>
+
+<!-- Page: Transactions List -->
+<div class="page" id="pageTransactions" role="region" aria-label="Daftar Transaksi">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-lg text-headline-lg font-black text-ink-black">Transaksi</h2>
+<button class="w-full md:w-auto bg-canary-yellow border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl p-4 flex items-center justify-center gap-2 transition-all cursor-pointer font-label-md text-label-md uppercase" id="btnAddTransaction2">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>Tambah</span>
+</button>
+</div>
+
+<!-- Filters -->
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-4 mb-6" id="transactionFilters">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div>
+<label class="font-label-md text-label-md block mb-1">Tipe</label>
+<select class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" id="filterType">
+<option value="">Semua</option>
+<option value="Masuk">Pemasukan</option>
+<option value="Keluar">Pengeluaran</option>
+</select>
+</div>
+<div>
+<label class="font-label-md text-label-md block mb-1">Kategori</label>
+<select class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" id="filterCategory">
+<option value="">Semua</option>
+</select>
+</div>
+<div>
+<label class="font-label-md text-label-md block mb-1">Rekening</label>
+<select class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" id="filterAccount">
+<option value="">Semua</option>
+</select>
+</div>
+<div>
+<label class="font-label-md text-label-md block mb-1">Periode</label>
+<select class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" id="filterPeriod">
+<option value="bulan ini">Bulan Ini</option>
+<option value="minggu ini">Minggu Ini</option>
+<option value="hari ini">Hari Ini</option>
+<option value="bulan lalu">Bulan Lalu</option>
+<option value="custom">Custom</option>
+</select>
+</div>
+</div>
+<div class="mt-4 flex gap-2" id="customDateRange" style="display: none;">
+<input type="date" class="flex-1 brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" id="filterDateFrom">
+<span class="flex items-center text-on-surface-variant">s/d</span>
+<input type="date" class="flex-1 brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" id="filterDateTo">
+<button class="bg-primary text-on-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl px-4 py-2 font-label-md text-label-md" id="btnApplyFilter">Terapkan</button>
+</div>
+</div>
+
+<!-- Transactions Table/List -->
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl overflow-hidden" id="transactionsTableContainer">
+<div class="overflow-x-auto">
+<table class="w-full" id="transactionsTable">
+<thead class="bg-surface-container">
+<tr>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Tanggal</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Kategori</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Keterangan</th>
+<th class="p-3 text-right font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Jumlah</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Rekening</th>
+<th class="p-3 text-center font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Aksi</th>
+</tr>
+</thead>
+<tbody id="transactionsTableBody">
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t-2 border-ink-black flex justify-between items-center" id="transactionsPagination">
+<div class="text-sm text-on-surface-variant" id="paginationInfo">Menampilkan 0 dari 0 transaksi</div>
+<div class="flex gap-2">
+<button class="bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-lg px-3 py-1 font-label-md text-label-md" id="btnPrevPage" disabled>Sebelumnya</button>
+<button class="bg-primary text-on-primary border-2 border-ink-black neo-shadow-sm rounded-lg px-3 py-1 font-label-md text-label-md" id="btnNextPage" disabled>Selanjutnya</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Page: Add Transaction -->
+<div class="page" id="pageAddTransaction" role="region" aria-label="Tambah Transaksi">
+<div class="max-w-2xl mx-auto">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-lg text-headline-lg font-black text-ink-black">Tambah Transaksi</h2>
+<button class="md:hidden p-2 border-2 border-transparent hover:border-ink-black rounded-lg" id="btnBackFromAdd">
+<span class="material-symbols-outlined text-ink-black">arrow_back</span>
+</button>
+</div>
+
+<!-- Mode Toggle -->
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-4 mb-6">
+<div class="flex gap-2" role="tablist" aria-label="Mode input transaksi">
+<button class="flex-1 tab-btn active bg-primary text-on-primary border-2 border-ink-black neo-shadow-sm rounded-lg py-3 font-label-md text-label-md uppercase" role="tab" aria-selected="true" data-mode="manual" id="tabManual">
+<span class="material-symbols-outlined mr-1" data-icon="edit">edit</span>
+Manual
+</button>
+<button class="flex-1 tab-btn bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-lg py-3 font-label-md text-label-md uppercase" role="tab" aria-selected="false" data-mode="ai" id="tabAI">
+<span class="material-symbols-outlined mr-1" data-icon="psychology">psychology</span>
+AI Asisten
+</button>
+</div>
+</div>
+
+<!-- Manual Form -->
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6" id="formManual" role="tabpanel" aria-labelledby="tabManual">
+<form id="transactionForm" novalidate>
+<div class="space-y-4">
+<div>
+<label class="font-label-md text-label-md block mb-1">Tipe <span class="text-tertiary">*</span></label>
+<div class="flex gap-2">
+<button type="button" class="flex-1 tab-btn bg-tertiary-fixed border-2 border-ink-black neo-shadow-sm rounded-lg py-3 font-label-md text-label-md uppercase" data-type="Keluar" id="btnTypeExpense">
+<span class="material-symbols-outlined mr-1" data-icon="arrow_upward">arrow_upward</span>
+Keluar
+</button>
+<button type="button" class="flex-1 tab-btn bg-secondary-container border-2 border-ink-black neo-shadow-sm rounded-lg py-3 font-label-md text-label-md uppercase" data-type="Masuk" id="btnTypeIncome">
+<span class="material-symbols-outlined mr-1" data-icon="arrow_downward">arrow_downward</span>
+Masuk
+</button>
+</div>
+<input type="hidden" name="type" id="transactionType" value="Keluar">
+</div>
+
+<div>
+<label class="font-label-md text-label-md block mb-1">Kategori <span class="text-tertiary">*</span></label>
+<select class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" name="category" id="categorySelect" required>
+<option value="">Pilih kategori</option>
+</select>
+</div>
+
+<div>
+<label class="font-label-md text-label-md block mb-1">Jumlah <span class="text-tertiary">*</span></label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-body-md">Rp</span>
+<input type="number" class="w-full brutal-input border-2 border-ink-black rounded-lg pl-10 pr-3 py-2 bg-paper-white focus:outline-none font-currency-display text-currency-display" name="amount" id="amountInput" placeholder="0" required min="100" max="500000000" step="100">
+</div>
+</div>
+
+<div>
+<label class="font-label-md text-label-md block mb-1">Rekening <span class="text-tertiary">*</span></label>
+<select class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" name="account" id="accountSelect" required>
+<option value="">Pilih rekening</option>
+</select>
+</div>
+
+<div>
+<label class="font-label-md text-label-md block mb-1">Catatan</label>
+<textarea class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" name="note" id="noteInput" rows="3" placeholder="Catatan tambahan (opsional)"></textarea>
+</div>
+
+<div>
+<label class="font-label-md text-label-md block mb-1">Tanggal</label>
+<input type="date" class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" name="date" id="dateInput">
+</div>
+
+<div class="pt-4 border-t-2 border-ink-black flex gap-3">
+<button type="submit" class="flex-1 bg-primary text-on-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 font-label-md text-label-md uppercase">Simpan Transaksi</button>
+<button type="button" class="flex-1 bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl py-3 font-label-md text-label-md uppercase" id="btnCancelTransaction">Batal</button>
+</div>
+</div>
+</form>
+</div>
+
+<!-- AI Assistant Form -->
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6 hidden" id="formAI" role="tabpanel" aria-labelledby="tabAI">
+<div class="space-y-4">
+<div>
+<label class="font-label-md text-label-md block mb-1">Ceritakan transaksimu <span class="text-tertiary">*</span></label>
+<textarea class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" id="aiInput" rows="4" placeholder="Contoh: Beli makan siang 25rb pakai gopay, atau: Terima gaji 5 juta masuk BCA" required></textarea>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-primary text-on-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 font-label-md text-label-md uppercase" id="btnProcessAI">
+<span class="material-symbols-outlined mr-1" data-icon="auto_awesome">auto_awesome</span>
+Proses dengan AI
+</button>
+<button class="flex-1 bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl py-3 font-label-md text-label-md uppercase" id="btnClearAI">Bersihkan</button>
+</div>
+<div class="hidden bg-surface-variant border-2 border-ink-black rounded-xl p-4" id="aiPreview">
+<h4 class="font-label-md text-label-md mb-3">Pratinjau Hasil AI</h4>
+<div class="grid grid-cols-2 gap-3 mb-4" id="aiPreviewData"></div>
+<div class="flex gap-3">
+<button class="flex-1 bg-primary text-on-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 font-label-md text-label-md uppercase" id="btnConfirmAI">Konfirmasi & Simpan</button>
+<button class="flex-1 bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl py-3 font-label-md text-label-md uppercase" id="btnEditAI">Edit Manual</button>
+</div>
+</div>
+<div class="hidden bg-error-container border-2 border-ink-black rounded-xl p-4" id="aiError">
+<p class="font-body-md text-body-md" id="aiErrorText"></p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Page: Accounts -->
+<div class="page" id="pageAccounts" role="region" aria-label="Rekening & Saldo">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-lg text-headline-lg font-black text-ink-black">Rekening & Saldo</h2>
+<button class="w-full md:w-auto bg-canary-yellow border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl p-4 flex items-center justify-center gap-2 transition-all cursor-pointer font-label-md text-label-md uppercase" id="btnAddAccount">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>Tambah Rekening</button>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="accountsGrid">
+<!-- Account cards rendered by JS -->
+</div>
+
+<!-- Add/Edit Account Modal -->
+<div class="modal-overlay" id="accountModal" role="dialog" aria-modal="true" aria-labelledby="accountModalTitle">
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6 w-full max-w-md">
+<h3 class="font-headline-md text-headline-md font-bold mb-4" id="accountModalTitle">Tambah Rekening</h3>
+<form id="accountForm">
+<input type="hidden" name="accountId" id="accountIdInput">
+<div class="space-y-4 mb-6">
+<div>
+<label class="font-label-md text-label-md block mb-1">Nama Rekening <span class="text-tertiary">*</span></label>
+<input type="text" class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" name="name" id="accountNameInput" required placeholder="Contoh: Cash, BCA, Gopay, ShopeePay">
+</div>
+<div>
+<label class="font-label-md text-label-md block mb-1">Tipe</label>
+<select class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" name="type" id="accountTypeSelect">
+<option value="cash">Tunai</option>
+<option value="bank">Bank</option>
+<option value="ewallet">E-Wallet</option>
+<option value="card">Kartu Kredit</option>
+<option value="other">Lainnya</option>
+</select>
+</div>
+<div>
+<label class="font-label-md text-label-md block mb-1">Saldo Awal</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-body-md">Rp</span>
+<input type="number" class="w-full brutal-input border-2 border-ink-black rounded-lg pl-10 pr-3 py-2 bg-paper-white focus:outline-none font-currency-display text-currency-display" name="balance" id="accountBalanceInput" placeholder="0" min="0" step="100">
+</div>
+</div>
+<div>
+<label class="font-label-md text-label-md block mb-1">Ikon</label>
+<select class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" name="icon" id="accountIconSelect">
+<option value="account_balance_wallet">💳 Dompet</option>
+<option value="account_balance">🏦 Bank</option>
+<option value="phone_android">📱 E-Wallet</option>
+<option value="credit_card">💳 Kartu</option>
+<option value="savings">💰 Tabungan</option>
+<option value="currency_exchange">💱 Valas</option>
+</select>
+</div>
+</div>
+<div class="flex gap-3">
+<button type="submit" class="flex-1 bg-primary text-on-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 font-label-md text-label-md uppercase">Simpan</button>
+<button type="button" class="flex-1 bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl py-3 font-label-md text-label-md uppercase" id="btnCancelAccount">Batal</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+
+<!-- Page: Budget -->
+<div class="page" id="pageBudget" role="region" aria-label="Budget">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-lg text-headline-lg font-black text-ink-black">Budget</h2>
+<button class="w-full md:w-auto bg-canary-yellow border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl p-4 flex items-center justify-center gap-2 transition-all cursor-pointer font-label-md text-label-md uppercase" id="btnAddBudget">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>Tambah Budget</button>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="budgetGrid">
+<!-- Budget cards rendered by JS -->
+</div>
+
+<!-- Add/Edit Budget Modal -->
+<div class="modal-overlay" id="budgetModal" role="dialog" aria-modal="true" aria-labelledby="budgetModalTitle">
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6 w-full max-w-md">
+<h3 class="font-headline-md text-headline-md font-bold mb-4" id="budgetModalTitle">Tambah Budget</h3>
+<form id="budgetForm">
+<input type="hidden" name="budgetId" id="budgetIdInput">
+<div class="space-y-4 mb-6">
+<div>
+<label class="font-label-md text-label-md block mb-1">Kategori <span class="text-tertiary">*</span></label>
+<select class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" name="category" id="budgetCategorySelect" required>
+<option value="">Pilih kategori</option>
+</select>
+</div>
+<div>
+<label class="font-label-md text-label-md block mb-1">Limit Bulanan <span class="text-tertiary">*</span></label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-body-md">Rp</span>
+<input type="number" class="w-full brutal-input border-2 border-ink-black rounded-lg pl-10 pr-3 py-2 bg-paper-white focus:outline-none font-currency-display text-currency-display" name="limit" id="budgetLimitInput" placeholder="0" required min="1000" step="1000">
+</div>
+</div>
+<div>
+<label class="font-label-md text-label-md block mb-1">Periode</label>
+<select class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" name="period" id="budgetPeriodSelect">
+<option value="monthly">Bulanan</option>
+<option value="weekly">Mingguan</option>
+</select>
+</div>
+</div>
+<div class="flex gap-3">
+<button type="submit" class="flex-1 bg-primary text-on-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 font-label-md text-label-md uppercase">Simpan</button>
+<button type="button" class="flex-1 bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl py-3 font-label-md text-label-md uppercase" id="btnCancelBudget">Batal</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+
+<!-- Page: Reports -->
+<div class="page" id="pageReports" role="region" aria-label="Laporan & Statistik">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-lg text-headline-lg font-black text-ink-black">Laporan & Statistik</h2>
+<div class="flex gap-2">
+<button class="bg-primary text-on-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl px-4 py-2 font-label-md text-label-md uppercase" id="btnExportExcel">
+<span class="material-symbols-outlined mr-1" data-icon="download">download</span>
+Export Excel
+</button>
+<button class="bg-secondary-container border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl px-4 py-2 font-label-md text-label-md uppercase" id="btnExportPDF">
+<span class="material-symbols-outlined mr-1" data-icon="picture_as_pdf">picture_as_pdf</span>
+Export PDF
+</button>
+</div>
+</div>
+
+<!-- Period Selector -->
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-4 mb-6">
+<div class="flex flex-wrap gap-2" id="reportPeriodTabs">
+<button class="tab-btn active bg-primary text-on-primary border-2 border-ink-black neo-shadow-sm rounded-lg px-4 py-2 font-label-md text-label-md" data-period="month">Bulan Ini</button>
+<button class="tab-btn bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-lg px-4 py-2 font-label-md text-label-md" data-period="last_month">Bulan Lalu</button>
+<button class="tab-btn bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-lg px-4 py-2 font-label-md text-label-md" data-period="week">Minggu Ini</button>
+<button class="tab-btn bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-lg px-4 py-2 font-label-md text-label-md" data-period="year">Tahun Ini</button>
+<button class="tab-btn bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-lg px-4 py-2 font-label-md text-label-md" data-period="custom">Custom</button>
+</div>
+<div class="mt-4 hidden" id="customPeriodInputs">
+<div class="flex flex-wrap gap-2">
+<input type="date" class="brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" id="reportDateFrom">
+<span class="flex items-center text-on-surface-variant">s/d</span>
+<input type="date" class="brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" id="reportDateTo">
+<button class="bg-primary text-on-primary border-2 border-ink-black neo-shadow-sm rounded-lg px-4 py-2 font-label-md text-label-md" id="btnApplyReportPeriod">Terapkan</button>
+</div>
+</div>
+</div>
+
+<!-- Summary Cards -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" id="reportSummaryCards">
+<div class="bg-primary-fixed border-2 border-ink-black neo-shadow rounded-xl p-6 flex flex-col justify-between h-32">
+<h3 class="font-label-md text-label-md text-on-surface uppercase mt-0">Total Pemasukan</h3>
+<p class="font-currency-display text-currency-display text-secondary mt-auto" id="reportIncome">+ Rp 0</p>
+</div>
+<div class="bg-tertiary-fixed border-2 border-ink-black neo-shadow rounded-xl p-6 flex flex-col justify-between h-32">
+<h3 class="font-label-md text-label-md text-on-surface uppercase mt-0">Total Pengeluaran</h3>
+<p class="font-currency-display text-currency-display text-tertiary mt-auto" id="reportExpense">- Rp 0</p>
+</div>
+<div class="bg-secondary-container border-2 border-ink-black neo-shadow rounded-xl p-6 flex flex-col justify-between h-32">
+<h3 class="font-label-md text-label-md text-on-surface uppercase mt-0">Saldo Bersih</h3>
+<p class="font-currency-display text-currency-display text-ink-black mt-auto" id="reportNet">Rp 0</p>
+</div>
+</section>
+
+<!-- Charts -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+<section class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6">
+<h3 class="font-headline-md text-headline-md font-bold mb-4 mt-0">Pengeluaran per Kategori</h3>
+<div class="aspect-square w-full border-2 border-ink-black bg-surface-variant flex items-center justify-center rounded-lg relative overflow-hidden">
+<canvas id="reportExpenseChart"></canvas>
+<div class="absolute inset-0 flex items-center justify-center" id="reportExpenseChartEmpty">
+<p class="text-on-surface-variant text-center px-4">Belum ada data</p>
+</div>
+</div>
+</section>
+<section class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6">
+<h3 class="font-headline-md text-headline-md font-bold mb-4 mt-0">Pemasukan per Kategori</h3>
+<div class="aspect-square w-full border-2 border-ink-black bg-surface-variant flex items-center justify-center rounded-lg relative overflow-hidden">
+<canvas id="reportIncomeChart"></canvas>
+<div class="absolute inset-0 flex items-center justify-center" id="reportIncomeChartEmpty">
+<p class="text-on-surface-variant text-center px-4">Belum ada data</p>
+</div>
+</div>
+</section>
+</div>
+
+<!-- Category Breakdown Table -->
+<section class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6">
+<h3 class="font-headline-md text-headline-md font-bold mb-4 mt-0">Rincian per Kategori</h3>
+<div class="overflow-x-auto">
+<table class="w-full" id="reportCategoryTable">
+<thead class="bg-surface-container">
+<tr>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Kategori</th>
+<th class="p-3 text-right font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Pengeluaran</th>
+<th class="p-3 text-right font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Pemasukan</th>
+<th class="p-3 text-right font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Netto</th>
+<th class="p-3 text-right font-label-md text-label-md text-on-surface border-b-2 border-ink-black">% dari Total</th>
+</tr>
+</thead>
+<tbody id="reportCategoryTableBody">
+</tbody>
+</table>
+</div>
+</section>
+</div>
+
+<!-- Page: Recurring Transactions -->
+<div class="page" id="pageRecurring" role="region" aria-label="Transaksi Berulang">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-lg text-headline-lg font-black text-ink-black">Transaksi Berulang</h2>
+<button class="w-full md:w-auto bg-canary-yellow border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl p-4 flex items-center justify-center gap-2 transition-all cursor-pointer font-label-md text-label-md uppercase" id="btnAddRecurring">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>Tambah</button>
+</div>
+
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl overflow-hidden" id="recurringList">
+<div class="overflow-x-auto">
+<table class="w-full" id="recurringTable">
+<thead class="bg-surface-container">
+<tr>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Deskripsi</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Kategori</th>
+<th class="p-3 text-right font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Jumlah</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Tipe</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Rekening</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Tanggal</th>
+<th class="p-3 text-center font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Status</th>
+<th class="p-3 text-center font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Aksi</th>
+</tr>
+</thead>
+<tbody id="recurringTableBody">
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Add/Edit Recurring Modal -->
+<div class="modal-overlay" id="recurringModal" role="dialog" aria-modal="true" aria-labelledby="recurringModalTitle">
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+<h3 class="font-headline-md text-headline-md font-bold mb-4" id="recurringModalTitle">Tambah Transaksi Berulang</h3>
+<form id="recurringForm">
+<input type="hidden" name="recurringId" id="recurringIdInput">
+<div class="space-y-4 mb-6">
+<div>
+<label class="font-label-md text-label-md block mb-1">Deskripsi <span class="text-tertiary">*</span></label>
+<input type="text" class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" name="description" id="recurringDescInput" required placeholder="Contoh: Gaji Bulanan, Bayar Cicilan, Sewa Kos">
+</div>
+<div>
+<label class="font-label-md text-label-md block mb-1">Kategori <span class="text-tertiary">*</span></label>
+<select class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" name="category" id="recurringCategorySelect" required>
+<option value="">Pilih kategori</option>
+</select>
+</div>
+<div>
+<label class="font-label-md text-label-md block mb-1">Jumlah <span class="text-tertiary">*</span></label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-body-md">Rp</span>
+<input type="number" class="w-full brutal-input border-2 border-ink-black rounded-lg pl-10 pr-3 py-2 bg-paper-white focus:outline-none font-currency-display text-currency-display" name="amount" id="recurringAmountInput" placeholder="0" required min="100" step="100">
+</div>
+</div>
+<div>
+<label class="font-label-md text-label-md block mb-1">Tipe <span class="text-tertiary">*</span></label>
+<div class="flex gap-2">
+<button type="button" class="flex-1 tab-btn bg-tertiary-fixed border-2 border-ink-black neo-shadow-sm rounded-lg py-3 font-label-md text-label-md uppercase" data-type="Keluar" id="recurringBtnTypeExpense">
+Keluar
+</button>
+<button type="button" class="flex-1 tab-btn bg-secondary-container border-2 border-ink-black neo-shadow-sm rounded-lg py-3 font-label-md text-label-md uppercase" data-type="Masuk" id="recurringBtnTypeIncome">
+Masuk
+</button>
+</div>
+<input type="hidden" name="type" id="recurringTypeInput" value="Keluar">
+</div>
+<div>
+<label class="font-label-md text-label-md block mb-1">Rekening <span class="text-tertiary">*</span></label>
+<select class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" name="account" id="recurringAccountSelect" required>
+<option value="">Pilih rekening</option>
+</select>
+</div>
+<div>
+<label class="font-label-md text-label-md block mb-1">Tanggal Setiap Bulan <span class="text-tertiary">*</span></label>
+<input type="number" class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" name="day" id="recurringDayInput" required min="1" max="28" placeholder="1-28">
+<p class="text-xs text-on-surface-variant mt-1">Transaksi akan otomatis dicatat setiap tanggal ini</p>
+</div>
+<div class="flex items-center gap-2">
+<input type="checkbox" class="w-5 h-5 border-2 border-ink-black rounded accent-primary" name="active" id="recurringActiveInput" checked>
+<label class="font-body-md text-body-md" for="recurringActiveInput">Aktif</label>
+</div>
+</div>
+<div class="flex gap-3">
+<button type="submit" class="flex-1 bg-primary text-on-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 font-label-md text-label-md uppercase">Simpan</button>
+<button type="button" class="flex-1 bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl py-3 font-label-md text-label-md uppercase" id="btnCancelRecurring">Batal</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+
+<!-- Page: Settings -->
+<div class="page" id="pageSettings" role="region" aria-label="Pengaturan">
+<div class="max-w-2xl mx-auto">
+<h2 class="font-headline-lg text-headline-lg font-black text-ink-black mb-6">Pengaturan</h2>
+
+<!-- Profile Section -->
+<section class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6 mb-6">
+<h3 class="font-headline-md text-headline-md font-bold mb-4">Profil & Akun</h3>
+<div class="flex items-center gap-4 mb-6">
+<div class="w-20 h-20 bg-surface-variant border-2 border-ink-black rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-ink-black text-3xl" id="settingsAvatar">person</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md font-bold" id="settingsName">Nama User</h4>
+<p class="text-on-surface-variant" id="settingsEmail">email@example.com</p>
+<p class="font-label-md text-label-md text-primary" id="settingsTelegram">@username</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<button class="bg-primary text-on-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnChangePassword">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+<span>Ubah Password</span>
+</button>
+<button class="bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnManageSessions">
+<span class="material-symbols-outlined" data-icon="devices">devices</span>
+<span>Kelola Sesi</span>
+</button>
+<button class="bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnUnlinkTelegram">
+<span class="material-symbols-outlined" data-icon="link_off">link_off</span>
+<span>Lepas Telegram</span>
+</button>
+<button class="bg-tertiary-container border-2 border-ink-black neo-shadow-sm rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnDeleteAccount">
+<span class="material-symbols-outlined" data-icon="delete_forever">delete_forever</span>
+<span>Hapus Akun</span>
+</button>
+</div>
+</section>
+
+<!-- Notifications Section -->
+<section class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6 mb-6">
+<h3 class="font-headline-md text-headline-md font-bold mb-4">Notifikasi & Pengingat</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-surface-variant border-2 border-ink-black rounded-xl">
+<div>
+<h4 class="font-label-md text-label-md">Pengingat Harian</h4>
+<p class="text-sm text-on-surface-variant">Dapatkan notifikasi untuk mencatat transaksi setiap hari</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only" id="notifDaily">
+<span class="w-12 h-7 bg-surface-container-high border-2 border-ink-black rounded-full flex items-center justify-start px-1 transition-colors peer-checked:bg-primary peer-checked:border-primary peer-checked:justify-end"></span>
+</label>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-variant border-2 border-ink-black rounded-xl">
+<div>
+<h4 class="font-label-md text-label-md">Pengingat Mingguan</h4>
+<p class="text-sm text-on-surface-variant">Ringkasan keuangan mingguan setiap Senin</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only" id="notifWeekly">
+<span class="w-12 h-7 bg-surface-container-high border-2 border-ink-black rounded-full flex items-center justify-start px-1 transition-colors peer-checked:bg-primary peer-checked:border-primary peer-checked:justify-end"></span>
+</label>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-variant border-2 border-ink-black rounded-xl">
+<div>
+<h4 class="font-label-md text-label-md">Notifikasi Budget</h4>
+<p class="text-sm text-on-surface-variant">Peringatan saat pengeluaran mendekati batas budget</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only" id="notifBudget">
+<span class="w-12 h-7 bg-surface-container-high border-2 border-ink-black rounded-full flex items-center justify-start px-1 transition-colors peer-checked:bg-primary peer-checked:border-primary peer-checked:justify-end"></span>
+</label>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-variant border-2 border-ink-black rounded-xl">
+<div>
+<h4 class="font-label-md text-label-md">WhatsApp Notifications</h4>
+<p class="text-sm text-on-surface-variant">Kirim laporan & pengingat ke WhatsApp (perlu setup di bot)</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only" id="notifWhatsApp" disabled>
+<span class="w-12 h-7 bg-surface-container-high border-2 border-ink-black rounded-full flex items-center justify-start px-1 transition-colors opacity-50"></span>
+</label>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-variant border-2 border-ink-black rounded-xl">
+<div>
+<h4 class="font-label-md text-label-md">Email Notifications</h4>
+<p class="text-sm text-on-surface-variant">Kirim laporan & pengingat ke Email</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only" id="notifEmail" disabled>
+<span class="w-12 h-7 bg-surface-container-high border-2 border-ink-black rounded-full flex items-center justify-start px-1 transition-colors opacity-50"></span>
+</label>
+</div>
+</div>
+</section>
+
+<!-- Data & Privacy Section -->
+<section class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6 mb-6">
+<h3 class="font-headline-md text-headline-md font-bold mb-4">Data & Privasi</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<button class="bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnExportData">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+<span>Ekspor Semua Data</span>
+</button>
+<button class="bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnImportData">
+<span class="material-symbols-outlined" data-icon="upload">upload</span>
+<span>Impor Data (CSV)</span>
+</button>
+<button class="bg-tertiary-container border-2 border-ink-black neo-shadow-sm rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnRequestDelete">
+<span class="material-symbols-outlined" data-icon="delete_sweep">delete_sweep</span>
+<span>Minta Hapus Data</span>
+</button>
+<button class="bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnViewAuditLog">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span>Lihat Audit Log</span>
+</button>
+</div>
+</section>
+
+<!-- Appearance Section -->
+<section class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6 mb-6">
+<h3 class="font-headline-md text-headline-md font-bold mb-4">Tampilan</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-surface-variant border-2 border-ink-black rounded-xl">
+<div>
+<h4 class="font-label-md text-label-md">Dark Mode</h4>
+<p class="text-sm text-on-surface-variant">Gunakan tema gelap</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only" id="darkModeToggle">
+<span class="w-12 h-7 bg-surface-container-high border-2 border-ink-black rounded-full flex items-center justify-start px-1 transition-colors peer-checked:bg-primary peer-checked:border-primary peer-checked:justify-end"></span>
+</label>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-variant border-2 border-ink-black rounded-xl">
+<div>
+<h4 class="font-label-md text-label-md">Compact Mode</h4>
+<p class="text-sm text-on-surface-variant">Tampilan lebih padat untuk data yang banyak</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only" id="compactModeToggle">
+<span class="w-12 h-7 bg-surface-container-high border-2 border-ink-black rounded-full flex items-center justify-start px-1 transition-colors peer-checked:bg-primary peer-checked:border-primary peer-checked:justify-end"></span>
+</label>
+</div>
+</div>
+</section>
+
+<!-- About Section -->
+<section class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6">
+<h3 class="font-headline-md text-headline-md font-bold mb-4">Tentang</h3>
+<div class="text-center">
+<p class="font-headline-md text-headline-md font-black text-ink-black">KeuanganBot</p>
+<p class="text-on-surface-variant mt-1">Versi 1.0.0 (Web)</p>
+<div class="mt-4 pt-4 border-t-2 border-ink-black">
+<p class="text-sm text-on-surface-variant">Dibuat dengan ❤️ oleh <a href="https://kaidev.my.id" target="_blank" class="text-primary underline">KaiDev</a></p>
+<p class="text-sm text-on-surface-variant mt-1">Terintegrasi dengan Telegram Bot @KeuanganBot</p>
+</div>
+</div>
+</section>
+</div>
+</div>
+
+<!-- Page: Admin Dashboard -->
+<div class="page" id="pageAdmin" role="region" aria-label="Dashboard Admin">
+<div class="max-w-[1400px] mx-auto">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-lg text-headline-lg font-black text-ink-black">Dashboard Admin</h2>
+<div class="flex gap-2">
+<button class="bg-tertiary-container border-2 border-ink-black neo-shadow-sm rounded-xl px-4 py-2 font-label-md text-label-md uppercase" id="btnRefreshAdmin">Refresh</button>
+</div>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6" id="adminStatsCards">
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6">
+<div class="font-label-md text-label-md text-on-surface-variant">Total User</div>
+<div class="font-currency-display text-currency-display text-primary" id="adminTotalUsers">0</div>
+</div>
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6">
+<div class="font-label-md text-label-md text-on-surface-variant">Email Terhubung</div>
+<div class="font-currency-display text-currency-display text-secondary" id="adminEmailLinked">0</div>
+</div>
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6">
+<div class="font-label-md text-label-md text-on-surface-variant">Reminder Aktif</div>
+<div class="font-currency-display text-currency-display text-secondary" id="adminReminderActive">0</div>
+</div>
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6">
+<div class="font-label-md text-label-md text-on-surface-variant">Transaksi Hari Ini</div>
+<div class="font-currency-display text-currency-display text-ink-black" id="adminTransactionsToday">0</div>
+</div>
+</div>
+
+<!-- Tabs -->
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl overflow-hidden">
+<div class="flex flex-wrap border-b-2 border-ink-black" id="adminTabs">
+<button class="tab-btn active bg-primary text-on-primary border-2 border-ink-black border-b-0 neo-shadow-sm rounded-tl-lg px-4 py-3 font-label-md text-label-md" data-tab="users">User</button>
+<button class="tab-btn bg-surface-variant border-2 border-ink-black border-b-0 neo-shadow-sm px-4 py-3 font-label-md text-label-md" data-tab="feedback">Saran & Kritik</button>
+<button class="tab-btn bg-surface-variant border-2 border-ink-black border-b-0 neo-shadow-sm px-4 py-3 font-label-md text-label-md" data-tab="errors">Error Log</button>
+<button class="tab-btn bg-surface-variant border-2 border-ink-black border-b-0 neo-shadow-sm px-4 py-3 font-label-md text-label-md" data-tab="broadcast">Broadcast</button>
+<button class="tab-btn bg-surface-variant border-2 border-ink-black border-b-0 neo-shadow-sm px-4 py-3 font-label-md text-label-md" data-tab="maintenance">Maintenance</button>
+<button class="tab-btn bg-surface-variant border-2 border-ink-black border-b-0 neo-shadow-sm rounded-tr-lg px-4 py-3 font-label-md text-label-md" data-tab="donasi">Donasi</button>
+</div>
+
+<!-- Tab Panels -->
+<div class="p-6">
+<!-- Users Tab -->
+<div class="tab-panel active" id="tabUsers">
+<div class="overflow-x-auto">
+<table class="w-full" id="adminUsersTable">
+<thead class="bg-surface-container">
+<tr>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Username</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Chat ID</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Email</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Reminder</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Bergabung</th>
+<th class="p-3 text-center font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Aksi</th>
+</tr>
+</thead>
+<tbody id="adminUsersTableBody">
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Feedback Tab -->
+<div class="tab-panel hidden" id="tabFeedback">
+<div class="overflow-x-auto">
+<table class="w-full" id="adminFeedbackTable">
+<thead class="bg-surface-container">
+<tr>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Waktu</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">User</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Pesan</th>
+<th class="p-3 text-center font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Aksi</th>
+</tr>
+</thead>
+<tbody id="adminFeedbackTableBody">
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Errors Tab -->
+<div class="tab-panel hidden" id="tabErrors">
+<div class="overflow-x-auto">
+<table class="w-full" id="adminErrorsTable">
+<thead class="bg-surface-container">
+<tr>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Waktu</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Chat ID</th>
+<th class="p-3 text-left font-label-md text-label-md text-on-surface border-b-2 border-ink-black">Error</th>
+</tr>
+</thead>
+<tbody id="adminErrorsTableBody">
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Broadcast Tab -->
+<div class="tab-panel hidden" id="tabBroadcast">
+<div class="bg-surface-variant border-2 border-ink-black rounded-xl p-6">
+<h3 class="font-headline-md text-headline-md font-bold mb-4">Kirim Pengumuman ke Semua User</h3>
+<textarea class="w-full brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none" id="broadcastMessage" rows="6" placeholder="Tulis pengumuman yang akan dikirim ke SEMUA user terdaftar..."></textarea>
+<div class="mt-4 flex gap-3">
+<button class="bg-primary text-on-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl px-6 py-3 font-label-md text-label-md uppercase" id="btnSendBroadcast">Kirim ke Semua User</button>
+<button class="bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl px-6 py-3 font-label-md text-label-md uppercase" id="btnClearBroadcast">Bersihkan</button>
+</div>
+<div class="mt-4 text-sm text-on-surface-variant" id="broadcastStatus"></div>
+</div>
+</div>
+
+<!-- Maintenance Tab -->
+<div class="tab-panel hidden" id="tabMaintenance">
+<div class="bg-surface-variant border-2 border-ink-black rounded-xl p-6">
+<h3 class="font-headline-md text-headline-md font-bold mb-4">Mode Maintenance</h3>
+<div class="flex items-center justify-between p-4 bg-paper-white border-2 border-ink-black rounded-xl mb-4">
+<div>
+<h4 class="font-label-md text-label-md">Status Maintenance</h4>
+<p class="text-sm text-on-surface-variant">Blokir akses user biasa, developer tetap bisa akses</p>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-label-md text-label-md px-4 py-2 border-2 border-ink-black rounded-lg" id="maintenanceStatus">NONAKTIF</span>
+<button class="bg-primary text-on-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl px-6 py-2 font-label-md text-label-md uppercase" id="btnToggleMaintenance">Aktifkan</button>
+</div>
+</div>
+<div class="bg-paper-white border-2 border-ink-black rounded-xl p-4">
+<h4 class="font-label-md text-label-md mb-2">Batas Upload Struk Foto Harian</h4>
+<div class="flex gap-4 items-center">
+<input type="number" class="brutal-input border-2 border-ink-black rounded-lg px-3 py-2 bg-paper-white focus:outline-none w-32" id="strukMaxInput" min="0" placeholder="0 = tanpa batas">
+<button class="bg-primary text-on-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl px-6 py-2 font-label-md text-label-md uppercase" id="btnSaveStrukMax">Simpan</button>
+</div>
+<p class="text-sm text-on-surface-variant mt-2" id="strukMaxStatus"></p>
+</div>
+</div>
+</div>
+
+<!-- Donasi Tab -->
+<div class="tab-panel hidden" id="tabDonasi">
+<div class="space-y-4" id="donasiSettings">
+<!-- Rendered by JS -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Bottom Nav Bar (Mobile) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 md:hidden bg-paper-white dark:bg-ink-black border-t-2 border-ink-black" id="bottomNav">
+<button class="flex flex-col items-center justify-center bg-primary text-on-primary border-2 border-ink-black neo-shadow-sm rounded-xl px-2 py-1 active:scale-95 transition-transform cursor-pointer" data-page="dashboard" aria-label="Dashboard">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md text-[10px]">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center text-ink-black dark:text-paper-white opacity-70 hover:bg-surface-container-low active:scale-95 transition-transform cursor-pointer px-2 py-1 rounded-xl" data-page="transactions" aria-label="Transaksi">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-md text-label-md text-[10px]">Transaksi</span>
+</button>
+<button class="flex flex-col items-center justify-center text-ink-black dark:text-paper-white opacity-70 hover:bg-surface-container-low active:scale-95 transition-transform cursor-pointer px-2 py-1 rounded-xl" data-page="addTransaction" aria-label="Tambah Transaksi">
+<span class="material-symbols-outlined" data-icon="add_box">add_box</span>
+<span class="font-label-md text-label-md text-[10px]">Tambah</span>
+</button>
+<button class="flex flex-col items-center justify-center text-ink-black dark:text-paper-white opacity-70 hover:bg-surface-container-low active:scale-95 transition-transform cursor-pointer px-2 py-1 rounded-xl" data-page="reports" aria-label="Laporan">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-md text-label-md text-[10px]">Laporan</span>
+</button>
+<button class="flex flex-col items-center justify-center text-ink-black dark:text-paper-white opacity-70 hover:bg-surface-container-low active:scale-95 transition-transform cursor-pointer px-2 py-1 rounded-xl" data-page="menu" aria-label="Menu">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+<span class="font-label-md text-label-md text-[10px]">Menu</span>
+</button>
+</nav>
+
+<!-- Floating Action Button (Mobile) -->
+<button class="md:hidden fixed bottom-24 right-4 w-14 h-14 bg-primary border-2 border-ink-black neo-shadow rounded-full flex items-center justify-center z-40 active:translate-y-1 active:shadow-none transition-all" id="fabAdd" aria-label="Tambah Transaksi">
+<span class="material-symbols-outlined text-paper-white" data-icon="add">add</span>
+</button>
+
+<!-- Toast Container -->
+<div class="fixed bottom-4 right-4 z-50 flex flex-col gap-2" id="toastContainer" aria-live="polite"></div>
+
+<!-- Loading Overlay -->
+<div class="fixed inset-0 bg-paper-white/90 dark:bg-ink-black/90 flex items-center justify-center z-50 hidden" id="loadingOverlay">
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-8 flex flex-col items-center gap-4">
+<div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+<p class="font-label-md text-label-md" id="loadingText">Memuat...</p>
+</div>
+</div>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
