@@ -209,10 +209,6 @@
 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.11.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
 <span>Masuk dengan Telegram</span>
 </button>
-<button class="w-full bg-canary-yellow border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-4 flex items-center justify-center gap-3 transition-all cursor-pointer font-label-md text-label-md uppercase" id="btnLoginEmail">
-<span class="material-symbols-outlined" data-icon="email">email</span>
-<span>Lanjutkan dengan Email</span>
-</button>
 </div>
 <p class="mt-6 text-sm text-on-surface-variant">Dengan masuk, Anda menyetujui <a href="#" class="underline hover:text-primary">Syarat & Ketentuan</a> dan <a href="#" class="underline hover:text-primary">Kebijakan Privasi</a></p>
 </div>
@@ -225,27 +221,54 @@
 <!-- Page: Link Telegram ID (OTP) -->
 <div class="page" id="pageLinkTelegram" role="region" aria-label="Link Telegram">
 <div class="max-w-md mx-auto mt-20">
-<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-8">
+<div class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-8 relative">
 <button class="absolute top-4 right-4 p-2 border-2 border-transparent hover:border-ink-black rounded-lg active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all" id="backToLogin">
 <span class="material-symbols-outlined text-ink-black">arrow_back</span>
 </button>
+
+<!-- Step 1: masukkan kode OTP dari bot -->
+<div id="otpStepInput">
 <h1 class="font-headline-lg text-headline-lg font-black text-ink-black mb-2 text-center">Hubungkan Telegram</h1>
-<p class="text-on-surface-variant mb-6 text-center">Kirimkan kode di bawah ke bot <b>@KeuanganBot</b> untuk menghubungkan akun</p>
+<p class="text-on-surface-variant mb-6 text-center">Buka bot Telegram, ketik <b>web</b>, lalu masukkan 6 karakter kode yang dikirim bot di kolom bawah.</p>
 <div class="bg-surface-variant border-2 border-ink-black rounded-xl p-6 text-center mb-6">
 <div class="font-label-md text-label-md text-on-surface-variant mb-2">KODE OTP</div>
-<div class="font-currency-display text-currency-display text-ink-black tracking-widest letter-spacing-[0.5em]" id="otpCode">------</div>
+<input id="otpCode" maxlength="6" placeholder="KODE6" autocomplete="off" class="w-full bg-transparent text-center font-currency-display text-currency-display text-ink-black tracking-widest uppercase outline-none">
 </div>
 <div class="space-y-3">
-<button class="w-full bg-secondary-container border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 flex items-center justify-center gap-2 transition-all cursor-pointer font-label-md text-label-md" id="btnRefreshOtp">
-<span class="material-symbols-outlined" data-icon="refresh">refresh</span>
-<span>Buat Kode Baru</span>
+<button class="w-full bg-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 flex items-center justify-center gap-2 transition-all cursor-pointer font-label-md text-label-md uppercase text-on-primary" id="btnVerifyOtp">
+<span class="material-symbols-outlined" data-icon="verified">verified</span>
+<span>Verifikasi Kode</span>
 </button>
-<button class="w-full bg-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 flex items-center justify-center gap-2 transition-all cursor-pointer font-label-md text-label-md uppercase text-on-primary" id="btnOpenTelegram">
+<button class="w-full bg-secondary-container border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 flex items-center justify-center gap-2 transition-all cursor-pointer font-label-md text-label-md" id="btnOpenTelegram">
 <span class="material-symbols-outlined" data-icon="telegram">telegram</span>
 <span>Buka Telegram</span>
 </button>
 </div>
-<p class="mt-4 text-sm text-center text-on-surface-variant">Kode berlaku 10 menit. Jangan bagikan ke siapapun.</p>
+<p class="mt-4 text-sm text-center text-on-surface-variant">Kode berlaku 15 menit &amp; hanya sekali pakai. Jangan bagikan ke siapapun.</p>
+</div>
+
+<!-- Step 2: menunggu konfirmasi Izinkan/Tolak dari Telegram -->
+<div id="otpStepWaiting" class="hidden text-center">
+<div class="w-16 h-16 mx-auto mb-4 border-4 border-ink-black border-t-transparent rounded-full animate-spin"></div>
+<h2 class="font-headline-md text-headline-md font-bold mb-2">Menunggu Konfirmasi</h2>
+<p class="text-on-surface-variant mb-6">Kode benar! Buka Telegram, lalu tekan <b>✅ Izinkan</b> pada pesan permintaan login yang baru saja bot kirim.</p>
+<button class="w-full bg-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 flex items-center justify-center gap-2 transition-all cursor-pointer font-label-md text-label-md uppercase text-on-primary mb-3" id="btnOpenTelegram2">
+<span class="material-symbols-outlined" data-icon="telegram">telegram</span>
+<span>Buka Telegram</span>
+</button>
+<button class="w-full bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl py-3 font-label-md text-label-md" id="btnCancelWaiting">Batalkan</button>
+</div>
+
+<!-- Step 3: ditolak / kadaluarsa -->
+<div id="otpStepFailed" class="hidden text-center">
+<div class="w-16 h-16 mx-auto mb-4 bg-tertiary-container border-2 border-ink-black rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">block</span>
+</div>
+<h2 class="font-headline-md text-headline-md font-bold mb-2" id="otpFailedTitle">Login Ditolak</h2>
+<p class="text-on-surface-variant mb-6" id="otpFailedText">Permintaan login ini ditolak lewat Telegram.</p>
+<button class="w-full bg-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl py-3 font-label-md text-label-md uppercase text-on-primary" id="btnRetryOtp">Minta Kode Baru</button>
+</div>
+
 </div>
 </div>
 </div>
@@ -821,104 +844,7 @@ Masuk
 <p class="font-label-md text-label-md text-primary" id="settingsTelegram">@username</p>
 </div>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-<button class="bg-primary text-on-primary border-2 border-ink-black neo-shadow neo-shadow-hover rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnChangePassword">
-<span class="material-symbols-outlined" data-icon="lock">lock</span>
-<span>Ubah Password</span>
-</button>
-<button class="bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnManageSessions">
-<span class="material-symbols-outlined" data-icon="devices">devices</span>
-<span>Kelola Sesi</span>
-</button>
-<button class="bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnUnlinkTelegram">
-<span class="material-symbols-outlined" data-icon="link_off">link_off</span>
-<span>Lepas Telegram</span>
-</button>
-<button class="bg-tertiary-container border-2 border-ink-black neo-shadow-sm rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnDeleteAccount">
-<span class="material-symbols-outlined" data-icon="delete_forever">delete_forever</span>
-<span>Hapus Akun</span>
-</button>
-</div>
-</section>
-
-<!-- Notifications Section -->
-<section class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6 mb-6">
-<h3 class="font-headline-md text-headline-md font-bold mb-4">Notifikasi & Pengingat</h3>
-<div class="space-y-4">
-<div class="flex items-center justify-between p-4 bg-surface-variant border-2 border-ink-black rounded-xl">
-<div>
-<h4 class="font-label-md text-label-md">Pengingat Harian</h4>
-<p class="text-sm text-on-surface-variant">Dapatkan notifikasi untuk mencatat transaksi setiap hari</p>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input type="checkbox" class="sr-only" id="notifDaily">
-<span class="w-12 h-7 bg-surface-container-high border-2 border-ink-black rounded-full flex items-center justify-start px-1 transition-colors peer-checked:bg-primary peer-checked:border-primary peer-checked:justify-end"></span>
-</label>
-</div>
-<div class="flex items-center justify-between p-4 bg-surface-variant border-2 border-ink-black rounded-xl">
-<div>
-<h4 class="font-label-md text-label-md">Pengingat Mingguan</h4>
-<p class="text-sm text-on-surface-variant">Ringkasan keuangan mingguan setiap Senin</p>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input type="checkbox" class="sr-only" id="notifWeekly">
-<span class="w-12 h-7 bg-surface-container-high border-2 border-ink-black rounded-full flex items-center justify-start px-1 transition-colors peer-checked:bg-primary peer-checked:border-primary peer-checked:justify-end"></span>
-</label>
-</div>
-<div class="flex items-center justify-between p-4 bg-surface-variant border-2 border-ink-black rounded-xl">
-<div>
-<h4 class="font-label-md text-label-md">Notifikasi Budget</h4>
-<p class="text-sm text-on-surface-variant">Peringatan saat pengeluaran mendekati batas budget</p>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input type="checkbox" class="sr-only" id="notifBudget">
-<span class="w-12 h-7 bg-surface-container-high border-2 border-ink-black rounded-full flex items-center justify-start px-1 transition-colors peer-checked:bg-primary peer-checked:border-primary peer-checked:justify-end"></span>
-</label>
-</div>
-<div class="flex items-center justify-between p-4 bg-surface-variant border-2 border-ink-black rounded-xl">
-<div>
-<h4 class="font-label-md text-label-md">WhatsApp Notifications</h4>
-<p class="text-sm text-on-surface-variant">Kirim laporan & pengingat ke WhatsApp (perlu setup di bot)</p>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input type="checkbox" class="sr-only" id="notifWhatsApp" disabled>
-<span class="w-12 h-7 bg-surface-container-high border-2 border-ink-black rounded-full flex items-center justify-start px-1 transition-colors opacity-50"></span>
-</label>
-</div>
-<div class="flex items-center justify-between p-4 bg-surface-variant border-2 border-ink-black rounded-xl">
-<div>
-<h4 class="font-label-md text-label-md">Email Notifications</h4>
-<p class="text-sm text-on-surface-variant">Kirim laporan & pengingat ke Email</p>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input type="checkbox" class="sr-only" id="notifEmail" disabled>
-<span class="w-12 h-7 bg-surface-container-high border-2 border-ink-black rounded-full flex items-center justify-start px-1 transition-colors opacity-50"></span>
-</label>
-</div>
-</div>
-</section>
-
-<!-- Data & Privacy Section -->
-<section class="bg-paper-white border-2 border-ink-black neo-shadow rounded-xl p-6 mb-6">
-<h3 class="font-headline-md text-headline-md font-bold mb-4">Data & Privasi</h3>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-<button class="bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnExportData">
-<span class="material-symbols-outlined" data-icon="download">download</span>
-<span>Ekspor Semua Data</span>
-</button>
-<button class="bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnImportData">
-<span class="material-symbols-outlined" data-icon="upload">upload</span>
-<span>Impor Data (CSV)</span>
-</button>
-<button class="bg-tertiary-container border-2 border-ink-black neo-shadow-sm rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnRequestDelete">
-<span class="material-symbols-outlined" data-icon="delete_sweep">delete_sweep</span>
-<span>Minta Hapus Data</span>
-</button>
-<button class="bg-surface-variant border-2 border-ink-black neo-shadow-sm rounded-xl p-4 flex items-center justify-center gap-2 font-label-md text-label-md uppercase" id="btnViewAuditLog">
-<span class="material-symbols-outlined" data-icon="history">history</span>
-<span>Lihat Audit Log</span>
-</button>
-</div>
+<p class="text-sm text-on-surface-variant">Login, reminder, dan pengaturan akun lainnya dikelola langsung lewat bot Telegram (ketik <b>menu</b>) untuk saat ini.</p>
 </section>
 
 <!-- Appearance Section -->
@@ -932,16 +858,6 @@ Masuk
 </div>
 <label class="relative inline-flex items-center cursor-pointer">
 <input type="checkbox" class="sr-only" id="darkModeToggle">
-<span class="w-12 h-7 bg-surface-container-high border-2 border-ink-black rounded-full flex items-center justify-start px-1 transition-colors peer-checked:bg-primary peer-checked:border-primary peer-checked:justify-end"></span>
-</label>
-</div>
-<div class="flex items-center justify-between p-4 bg-surface-variant border-2 border-ink-black rounded-xl">
-<div>
-<h4 class="font-label-md text-label-md">Compact Mode</h4>
-<p class="text-sm text-on-surface-variant">Tampilan lebih padat untuk data yang banyak</p>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input type="checkbox" class="sr-only" id="compactModeToggle">
 <span class="w-12 h-7 bg-surface-container-high border-2 border-ink-black rounded-full flex items-center justify-start px-1 transition-colors peer-checked:bg-primary peer-checked:border-primary peer-checked:justify-end"></span>
 </label>
 </div>
